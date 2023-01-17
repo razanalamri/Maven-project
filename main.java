@@ -251,18 +251,11 @@ public class main{
 	 
 
 	 public static void main(String[] args) throws IOException, InterruptedException {
-		 ReadfromApi();
+		 UpdatingApi();
 		
   
 	
 }
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
@@ -382,6 +375,61 @@ public class main{
 			
 
 		}
+		    
+		    
+		    public static void UpdatingApi()throws IOException, InterruptedException {
+				 Scanner scanner=new Scanner(System.in);    
+				HttpClient client = HttpClient.newHttpClient();
+				HttpRequest request = HttpRequest.newBuilder()
+						.uri(URI.create("http://universities.hipolabs.com/search?country=United+States")).build();
+				HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+				String jsonString0 = response.body();
+
+				Gson gson = new Gson();
+				main[] data1 = gson.fromJson(jsonString0, main[].class);
+				
+				for (main r : data1) {
+					int independent = r.isIndependent()== true ? 1:0;
+					String status=r.getStatus();
+					String region=r.getRegion();
+					String subregion = r.getSubregion();
+					int population = r.getPopulation();
+					String startOfWeek = r.getStartOfWeek();
+					
+					
+					 try{
+						 Driver driver = (Driver) Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver").newInstance();
+						 DriverManager.registerDriver(driver);
+
+				         // Reference to connection interface
+				         con = DriverManager.getConnection(url, user,
+				                 pass);
+
+				         // Creating a statement
+				         Statement st = con.createStatement();
+				      
+				         System.out.println("Please Enter any region to Update region :");
+				         String userinput =scanner.next();
+				         System.out.println("Please Enter any subregion to Update subregion :");
+				         String name3=scanner.next();
+				  
+				
+				      
+				         String sql="UPDATE MyApi SET region='"+userinput+"',subregion='"+name3+"'";
+					     ResultSet result=st.executeQuery(sql);
+			      
+			      
+			  }
+			  catch (Exception ex) {
+
+			      System.err.println(ex);
+				 
+			}
+					
+					    }
+				
+
+			}
 	 
 
 
