@@ -6,7 +6,9 @@ import java.net.http.HttpResponse;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Scanner;
 
 import com.google.gson.Gson;
 
@@ -249,7 +251,7 @@ public class main{
 	 
 
 	 public static void main(String[] args) throws IOException, InterruptedException {
-		 insert();
+		 ReadfromApi();
 		
   
 	
@@ -314,4 +316,76 @@ public class main{
 		     }
 
 
-		}}}
+		}}
+	 
+
+
+			
+		    public static void ReadfromApi()throws IOException, InterruptedException {
+			 Scanner scanner=new Scanner(System.in);    
+			HttpClient client = HttpClient.newHttpClient();
+			HttpRequest request = HttpRequest.newBuilder()
+					.uri(URI.create("http://universities.hipolabs.com/search?country=United+States")).build();
+			HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+			String jsonString0 = response.body();
+
+			Gson gson = new Gson();
+			main[] data1 = gson.fromJson(jsonString0, main[].class);
+			
+			for (main r : data1) {
+				int independent = r.isIndependent()== true ? 1:0;
+				String status=r.getStatus();
+				String region=r.getRegion();
+				String subregion = r.getSubregion();
+				int population = r.getPopulation();
+				String startOfWeek = r.getStartOfWeek();
+				
+				
+				 try{
+					 Driver driver = (Driver) Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver").newInstance();
+					 DriverManager.registerDriver(driver);
+
+			         // Reference to connection interface
+			         con = DriverManager.getConnection(url, user,
+			                 pass);
+
+			         // Creating a statement
+			         Statement st = con.createStatement();
+			         System.out.println("Please Enter the number of rows :");
+			         int userinput=scanner.nextInt();
+			         int count=0;
+			         String sql="SELECT * FROM MyApi";
+				     ResultSet result=st.executeQuery(sql);
+				     while(result.next()&&count<userinput) {
+				    	
+				    	 int independent1=result.getInt("independent");
+				    	 String status1=result.getString("status");
+				    	 String region1=result.getString("region");
+				    	 String subregion1=result.getString("subregion");
+				    	 String population1=result.getString("population");
+				    	 String startOfWeek1=result.getString("startOfWeek");
+				    	
+				    	 
+				    	 
+		   	  System.out.println(independent1+" "+status1+" "+region1+" "+subregion1+" "+population1+" "+startOfWeek1);
+		   	  count++;
+		      
+		      
+		  }}
+		  catch (Exception ex) {
+
+		      System.err.println(ex);
+			 
+		}}
+			
+			
+			
+
+		}
+	 
+
+
+
+
+
+}
